@@ -99,6 +99,79 @@ h2:hover::after, h3:hover::after {
     width: 95px;
 }
 
+/* --- Pop-in entrance animation + accent line for boxes (uploader, alerts,
+   expanders, tables) — matches the underline accent style used on headings
+   like "Filters", so boxes across Scan/Dashboard/Budgets feel consistent
+   with the sidebar instead of just appearing flat. --- */
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+[data-testid="stAlert"],
+[data-testid="stFileUploader"],
+[data-testid="stExpander"],
+[data-testid="stDataEditor"],
+[data-testid="stDataFrame"],
+[data-testid="stMetric"] {
+    animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger successive boxes slightly so they don't all pop at once */
+[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:nth-child(2) [data-testid="stAlert"] { animation-delay: 0.05s; }
+[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:nth-child(3) [data-testid="stAlert"] { animation-delay: 0.1s; }
+[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:nth-child(4) [data-testid="stAlert"] { animation-delay: 0.15s; }
+
+/* Top accent line on alert/info/warning/success boxes — same gradient as
+   the heading underline, just moved to the top edge of a box */
+[data-testid="stAlert"] {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px !important;
+}
+
+[data-testid="stAlert"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #FFFFFF, #F59E0B);
+}
+
+/* Same accent line on the file uploader box and expanders */
+[data-testid="stFileUploader"],
+[data-testid="stExpander"] {
+    position: relative;
+    overflow: hidden;
+}
+
+[data-testid="stFileUploader"]::before,
+[data-testid="stExpander"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 52px;
+    height: 3px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #FFFFFF, #F59E0B);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2;
+}
+
+[data-testid="stFileUploader"]:hover::before,
+[data-testid="stExpander"]:hover::before {
+    width: 95px;
+}
+
 /* --- Header Title with Warm Cream-to-Gold Shimmer --- */
 .gradient-title-wrap {
     display: flex;
