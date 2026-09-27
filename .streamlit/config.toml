@@ -1,0 +1,11 @@
+[server]
+enableStaticServing = true
+headless = true
+
+[theme]
+base = "dark"
+primaryColor = "#E06D36"
+backgroundColor = "#B05520"
+secondaryBackgroundColor = "#381B0C"
+textColor = "#FFFFFF"
+font = "sans serif"

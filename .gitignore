@@ -1,0 +1,10 @@
+# Secrets — never commit your real API key
+.env
+
+# Your personal expense data — don't publish this to a public repo
+data/*.csv
+
+# Python cruft
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
