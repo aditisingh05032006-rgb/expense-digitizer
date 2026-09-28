@@ -128,12 +128,16 @@ h2:hover::after, h3:hover::after {
 [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:nth-child(3) [data-testid="stAlert"] { animation-delay: 0.1s; }
 [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:nth-child(4) [data-testid="stAlert"] { animation-delay: 0.15s; }
 
-/* Top accent line on alert/info/warning/success boxes — same gradient as
-   the heading underline, just moved to the top edge of a box */
+/* Orange underline-only on alert/info/warning/success — no box, just the line */
 [data-testid="stAlert"] {
     position: relative;
     overflow: hidden;
-    border-radius: 12px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+    padding-top: 0.75rem !important;
 }
 
 [data-testid="stAlert"]::before {
@@ -141,9 +145,15 @@ h2:hover::after, h3:hover::after {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 52px;
     height: 3px;
+    border-radius: 99px;
     background: linear-gradient(90deg, #FFFFFF, #F59E0B);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-testid="stAlert"]:hover::before {
+    width: 95px;
 }
 
 /* Same accent line on the file uploader box and expanders */
@@ -364,20 +374,19 @@ input[type="text"]:focus, input[type="number"]:focus, .stSelectbox div[data-base
     box-shadow: 0 0 16px rgba(224, 109, 54, 0.5) !important;
 }
 
-/* File Uploader Glass Box */
+/* File Uploader — borderless, just orange underline at top */
 [data-testid="stFileUploader"] {
-    border: 2px dashed rgba(255, 255, 255, 0.4) !important;
-    border-radius: 16px !important;
-    background: rgba(40, 20, 10, 0.6) !important;
-    backdrop-filter: blur(14px);
-    transition: all 0.3s ease;
-    padding: 1rem;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none;
+    padding: 0.5rem 0 1rem;
 }
 
 [data-testid="stFileUploader"]:hover {
-    border-color: #FFAA80 !important;
-    background: rgba(224, 109, 54, 0.2) !important;
-    box-shadow: 0 8px 30px rgba(224, 109, 54, 0.25);
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 /* Sidebar Styling */
