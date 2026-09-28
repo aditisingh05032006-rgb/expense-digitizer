@@ -55,7 +55,7 @@ html, body, [data-testid="stApp"] {
 }
 
 [data-testid="stMainBlockContainer"], .block-container {
-    padding-top: 2rem !important;
+    padding-top: 3.25rem !important;
     padding-bottom: 4rem !important;
 }
 
@@ -211,6 +211,8 @@ h2:hover::after, h3:hover::after {
     gap: 0.75rem;
     flex-wrap: wrap;
     text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    padding-right: 160px;  /* keeps badges away from Streamlit toolbar */
+    max-width: 100%;
 }
 
 /* Feature badges in header */
@@ -270,20 +272,27 @@ h2:hover::after, h3:hover::after {
 }
 
 /* --- Navigation Tabs — underline-only, no boxes --- */
+/* Hide BaseWeb default built-in active tab highlight bar & bottom border (prevents overlapping lines) */
+.stTabs [data-baseweb="tab-highlight"],
+.stTabs [data-baseweb="tab-border"] {
+    display: none !important;
+}
+
 .stTabs [data-baseweb="tab-list"] {
-    gap: 0;
+    gap: 0.5rem;
     background: transparent !important;
     backdrop-filter: none;
     padding: 0;
     border-radius: 0;
     border: none;
     box-shadow: none;
-    border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 0.5rem;
 }
 
 .stTabs [data-baseweb="tab"] {
     height: auto;
-    padding: 0.65rem 1.5rem 0.75rem;
+    padding: 0.65rem 1.25rem 0.75rem;
     border-radius: 0;
     font-weight: 600;
     font-size: 0.95rem;
@@ -295,21 +304,20 @@ h2:hover::after, h3:hover::after {
     transition: color 0.22s ease, transform 0.22s ease;
 }
 
-/* Orange underline — hidden by default */
+/* Orange underline — matching the Filters heading style (left-aligned gradient line) */
 .stTabs [data-baseweb="tab"]::after {
     content: '';
     position: absolute;
-    bottom: -1px;
-    left: 50%;
+    bottom: -1.5px;
+    left: 1.25rem;
     width: 0;
     height: 3px;
     border-radius: 99px;
     background: linear-gradient(90deg, #FFFFFF, #F59E0B);
-    transform: translateX(-50%);
     transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover — text pops, tab lifts, orange line slides in */
+/* Hover — text pops up, orange line pops in like Filters */
 .stTabs [data-baseweb="tab"]:hover {
     color: #FFFFFF !important;
     background: transparent !important;
@@ -317,21 +325,25 @@ h2:hover::after, h3:hover::after {
 }
 
 .stTabs [data-baseweb="tab"]:hover::after {
-    width: 60%;
+    width: 52px;
 }
 
-/* Active — full orange underline + bright text + amber glow */
+/* Active — orange underline (52px wide, matching Filters heading) */
 .stTabs [aria-selected="true"] {
     background: transparent !important;
     color: #FFFFFF !important;
     border: none !important;
     box-shadow: none !important;
     transform: translateY(-2px);
-    text-shadow: 0 0 18px rgba(245, 158, 11, 0.55);
+    text-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
 }
 
 .stTabs [aria-selected="true"]::after {
-    width: 80%;
+    width: 52px;
+}
+
+.stTabs [aria-selected="true"]:hover::after {
+    width: 95px;
 }
 
 
@@ -478,7 +490,7 @@ def page_header(title: str = "Expense & Receipt Digitizer", subtitle: str = ""):
     img_html = f'<div class="fancy-logo-container" title="Expense Digitizer • Powered by Gemini AI"><img class="fancy-logo" src="{_LOGO_B64}" alt="Expense Digitizer Logo" decoding="sync"></div>'
 
     header_html = (
-        '<div style="margin-top: -0.5rem; margin-bottom: 1.2rem;">'
+        '<div style="margin-top: 0; margin-bottom: 1.2rem;">'
         '<div class="gradient-title-wrap">'
         f'{img_html}'
         '<div>'
@@ -489,7 +501,6 @@ def page_header(title: str = "Expense & Receipt Digitizer", subtitle: str = ""):
         f'<span>{subtitle or "Scan a receipt, track it, stay on budget."}</span>'
         '<span class="header-badge"><span class="pulse-dot"></span> REAL PAPER • AI DIGITIZED</span>'
         '<span class="header-badge">⚡ AUTO-SAVE ACTIVE</span>'
-        '<span class="header-badge">🌿 EDITORIAL TERRACOTTA</span>'
         '</div>'
         '</div>'
     )
