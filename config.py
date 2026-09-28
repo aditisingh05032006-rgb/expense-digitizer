@@ -40,4 +40,3 @@ def _get_secret(key: str, default: str = "") -> str:
 
 GEMINI_API_KEY = _get_secret("GEMINI_API_KEY")
 GEMINI_ENABLED = bool(GEMINI_API_KEY)
-GEMINI_MODEL = _get_secret("GEMINI_MODEL", "gemini-3.1-flash-lite")
