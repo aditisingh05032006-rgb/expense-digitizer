@@ -25,13 +25,14 @@ from config import GEMINI_API_KEY, GEMINI_ENABLED
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Model priority list — tries each in order if the previous one is unavailable
+# Model priority list — confirmed available from API (fastest → most capable)
 # ---------------------------------------------------------------------------
 _MODEL_CHAIN = [
-    "gemini-2.0-flash",        # fastest current stable model
-    "gemini-2.0-flash-lite",   # even lighter / cheaper
-    "gemini-1.5-flash",        # proven fallback
-    "gemini-1.5-flash-8b",     # smallest fallback
+    "gemini-2.5-flash",         # fastest current stable — primary choice
+    "gemini-flash-latest",      # always points to latest flash
+    "gemini-2.5-flash-lite",    # lighter / quicker on overload
+    "gemini-3.1-flash-lite",    # newer lite fallback
+    "gemini-flash-lite-latest", # alias fallback
 ]
 
 # Retry settings for 503 / 429 overload errors
@@ -129,18 +130,22 @@ def _try_model(client: genai.Client, model: str, image: Image.Image) -> ReceiptS
 
         except Exception as e:
             err_str = str(e)
+            is_not_found = any(code in err_str for code in ("404", "NOT_FOUND"))
             is_transient = any(code in err_str for code in ("503", "429", "UNAVAILABLE", "Resource has been exhausted"))
 
-            if is_transient and attempt < _MAX_RETRIES:
-                logger.warning("Model %s attempt %d/%d failed (transient): %s. Retrying in %.1fs…",
-                               model, attempt, _MAX_RETRIES, err_str[:80], delay)
+            if is_not_found:
+                # Model doesn't exist — skip immediately, no retries
+                raise
+            elif is_transient and attempt < _MAX_RETRIES:
+                logger.warning("Model %s attempt %d/%d — transient error, retrying in %.1fs…",
+                               model, attempt, _MAX_RETRIES, delay)
                 time.sleep(delay)
-                delay *= 2  # exponential backoff
+                delay *= 2
                 last_err = e
             else:
-                raise  # non-transient or last attempt — propagate
+                raise
 
-    raise last_err  # shouldn't reach here, but satisfies type checker
+    raise last_err
 
 
 def extract_with_gemini(image_path: str) -> ReceiptSchema:
