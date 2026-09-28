@@ -269,39 +269,71 @@ h2:hover::after, h3:hover::after {
     border-color: #FFAA80;
 }
 
-/* --- Navigation Tabs --- */
+/* --- Navigation Tabs — underline-only, no boxes --- */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 0.5rem;
-    background: rgba(36, 18, 9, 0.85);
-    backdrop-filter: blur(16px);
-    padding: 0.4rem;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    gap: 0;
+    background: transparent !important;
+    backdrop-filter: none;
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
 }
 
 .stTabs [data-baseweb="tab"] {
     height: auto;
-    padding: 0.6rem 1.4rem;
-    border-radius: 10px;
+    padding: 0.65rem 1.5rem 0.75rem;
+    border-radius: 0;
     font-weight: 600;
     font-size: 0.95rem;
-    color: #E8D5C4 !important;
-    transition: all 0.25s ease;
-    border: 1px solid transparent;
+    color: rgba(232, 213, 196, 0.7) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    position: relative;
+    transition: color 0.22s ease, transform 0.22s ease;
 }
 
+/* Orange underline — hidden by default */
+.stTabs [data-baseweb="tab"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #FFFFFF, #F59E0B);
+    transform: translateX(-50%);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover — text pops, tab lifts, orange line slides in */
 .stTabs [data-baseweb="tab"]:hover {
     color: #FFFFFF !important;
-    background: rgba(224, 109, 54, 0.25);
+    background: transparent !important;
+    transform: translateY(-2px);
 }
 
-.stTabs [aria-selected="true"] {
-    background: linear-gradient(135deg, rgba(224, 109, 54, 0.85), rgba(176, 85, 32, 0.95)) !important;
-    color: #FFFFFF !important;
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 4px 18px rgba(176, 85, 32, 0.5);
+.stTabs [data-baseweb="tab"]:hover::after {
+    width: 60%;
 }
+
+/* Active — full orange underline + bright text + amber glow */
+.stTabs [aria-selected="true"] {
+    background: transparent !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: translateY(-2px);
+    text-shadow: 0 0 18px rgba(245, 158, 11, 0.55);
+}
+
+.stTabs [aria-selected="true"]::after {
+    width: 80%;
+}
+
 
 /* --- Data Editor & Tables High Visibility --- */
 [data-testid="stDataEditor"], [data-testid="stDataFrame"], [data-testid="stTable"] {
