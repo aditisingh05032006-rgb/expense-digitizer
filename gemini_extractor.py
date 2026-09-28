@@ -22,6 +22,7 @@ the calling code (app.py) is expected to catch this and fall back to the
 classic pipeline.
 """
 
+import io
 from typing import List
 from PIL import Image
 from pydantic import BaseModel
@@ -33,6 +34,27 @@ from config import GEMINI_API_KEY, GEMINI_MODEL, GEMINI_ENABLED
 
 class GeminiExtractionError(Exception):
     pass
+
+
+# Client created once at import time — avoids re-init overhead on every scan
+_client: genai.Client | None = None
+
+def _get_client() -> genai.Client:
+    global _client
+    if _client is None and GEMINI_ENABLED:
+        _client = genai.Client(api_key=GEMINI_API_KEY)
+    return _client
+
+
+def _compress_image(image: Image.Image, max_px: int = 1024, quality: int = 85) -> Image.Image:
+    """Resize + JPEG-compress before upload — reduces payload from ~3-5MB to ~150KB,
+    cutting network transfer time significantly without losing readable text."""
+    img = image.copy()
+    img.thumbnail((max_px, max_px), Image.LANCZOS)  # preserves aspect ratio
+    buf = io.BytesIO()
+    img.convert("RGB").save(buf, format="JPEG", quality=quality, optimize=True)
+    buf.seek(0)
+    return Image.open(buf)
 
 
 class ReceiptItemSchema(BaseModel):
@@ -79,8 +101,9 @@ def extract_with_gemini(image_path: str) -> ReceiptSchema:
         )
 
     try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        client = _get_client()
         image = Image.open(image_path)
+        image = _compress_image(image)  # shrink before upload for faster transfer
 
         response = client.models.generate_content(
             model=GEMINI_MODEL,
